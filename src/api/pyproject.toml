@@ -51,7 +51,8 @@ dev = [
     "ruff==0.1.7",
     "mypy==1.7.1",
     "pandas-stubs==2.1.1.230928",
-    "types-python-jose==3.3.4.8"
+    "types-python-jose==3.3.4.8",
+    "faker==21.0.0"
 ]
 ci = [
     "twine==4.0.2",

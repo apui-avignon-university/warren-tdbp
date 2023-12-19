@@ -1,0 +1,17 @@
+
+.c__window {
+
+  padding: 1.5rem;
+
+  &__title {
+    margin-bottom: 1rem;
+    min-width: fit-content;
+    width: fit-content;
+  }
+
+  &__content {
+    font-size: 1.25rem;
+    min-width: fit-content;
+    width: fit-content;
+  }
+}

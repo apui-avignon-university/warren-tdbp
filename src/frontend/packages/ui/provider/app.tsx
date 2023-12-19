@@ -4,7 +4,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { CunninghamProvider } from "@openfun/cunningham-react";
 import { queryClient } from "../libs/react-query";
 import { LTIProvider } from "../contexts/LTIContext";
-import { FiltersProvider } from "../video/contexts/filtersContext";
+import { FiltersProvider as TDBPProvider } from "../tdbp/contexts/filtersContext";
+import { FiltersProvider as VideoProvider } from "../video/contexts/filtersContext";
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -14,12 +15,14 @@ type AppProviderProps = {
 const AppProvider = ({ children }: AppProviderProps) => (
   <CunninghamProvider>
     <LTIProvider>
-      <FiltersProvider>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <ReactQueryDevtools initialIsOpen />
-        </QueryClientProvider>
-      </FiltersProvider>
+      <VideoProvider>
+        <TDBPProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <ReactQueryDevtools initialIsOpen />
+          </QueryClientProvider>
+        </TDBPProvider>
+      </VideoProvider>
     </LTIProvider>
   </CunninghamProvider>
 );
