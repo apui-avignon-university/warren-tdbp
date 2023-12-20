@@ -1,8 +1,10 @@
+import React from "react";
 import { Filters } from "../../components/Filters";
 import { Flexgrid } from "../../../components/Layout/Flexgrid";
 import { Window } from "../../components/Window";
 import { Activites } from "../../components/Activities";
 import { Radar } from "../../components/Radar";
+import { StudentsComparison } from "../../components/StudentsComparison";
 
 /**
  * A React component responsible for rendering a dashboard overview of video statistics.
@@ -19,6 +21,7 @@ export default () => {
       <Window />
       <Flexgrid>
         <Activites />
+        <StudentsComparison />
         <Radar />
       </Flexgrid>
     </div>

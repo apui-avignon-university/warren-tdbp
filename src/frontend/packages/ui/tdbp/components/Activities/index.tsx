@@ -40,6 +40,24 @@ export const Activites: React.FC = () => {
 
   const { slidingWindow } = useSlidingWindow({ courseId, until });
 
+  const resources = useMemo(() => {
+    if (!slidingWindow?.active_actions) {
+      return [];
+    }
+
+    const activeActions = slidingWindow?.active_actions;
+
+    if (!activeActions.length) {
+      return [];
+    }
+
+    const sortedResources = activeActions
+      ?.filter((action) => action.type === "resource")
+      .sort((a, b) => a.activation_rate - b.activation_rate);
+
+    return sortedResources;
+  }, [slidingWindow]);
+
   const parseYAxis = (actions: Array<Action>): Array<string> =>
     actions.map((action) => action.title.en) || [];
 
@@ -51,7 +69,7 @@ export const Activites: React.FC = () => {
       show: true,
       position: "insideLeft",
       formatter: (d) =>
-        dayjs(actions[d.dataIndex].activation_date).format("DD MMMM"),
+        dayjs(actions[d.dataIndex].activation_date).format("DD/MM"),
     },
     emphasis: {
       focus: "series",
@@ -60,26 +78,11 @@ export const Activites: React.FC = () => {
   });
 
   const formattedOption = useMemo(() => {
-    if (!slidingWindow?.active_actions) {
-      return baseOption;
-    }
-
-    const activeActions = slidingWindow.active_actions;
-
-    if (!activeActions.length) {
-      return baseOption;
-    }
     const newOption = cloneDeep(baseOption);
-    // We assume all requests share the same xAxis.
-
-    const sortedActiveActions = activeActions.sort(
-      (a, b) => a.activation_rate - b.activation_rate,
-    );
-
-    newOption.yAxis.data = parseYAxis(sortedActiveActions);
-    newOption.series = parseSeries(sortedActiveActions);
+    newOption.yAxis.data = parseYAxis(resources);
+    newOption.series = parseSeries(resources);
     return newOption;
-  }, [slidingWindow]);
+  }, [resources]);
 
   return (
     <Card className="c__activities">

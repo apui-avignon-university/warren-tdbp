@@ -96,7 +96,9 @@ export const Radar: React.FC = () => {
     const newOption = cloneDeep(baseOption);
     // We assume all requests share the same xAxis.
 
-    newOption.radar.indicator = parseIndicators(activeActions);
+    newOption.radar.indicator = parseIndicators(
+      activeActions.filter((action) => action.type === "resource"),
+    );
     newOption.series = parseSeries(data || [], selectedStudent);
     return newOption;
   }, [slidingWindow, data, selectedStudent]);

@@ -67,12 +67,23 @@ async def get_window(
         Action(
             title={'en': f'Ressource {i:02}'},
             iri=i,
-            type=random.choice(['quizz', 'assignment']),
+            type='resource',
             activation_date=fake.date_time_between_dates(datetime_start=since, datetime_end=until),
             cohort=random.choices(dynamic_cohort),
             activation_rate=fake.pyint(min_value=0, max_value=100)
         ) for i in range(8)
     ]
+
+    active_actions += [
+            Action(
+                title={'en': f'Activité {i}'},
+                iri=i+8,
+                type='activity',
+                activation_date=fake.date_time_between_dates(datetime_start=since, datetime_end=until),
+                cohort=random.choices(dynamic_cohort),
+                activation_rate=fake.pyint(min_value=0, max_value=100)
+            ) for i in range(10)
+        ]
 
     return SlidingWindow(
         window=DatetimeRange(since=since, until=until),
@@ -94,11 +105,22 @@ async def get_score(
         Action(
             title={'en': f'Ressource {i}'},
             iri=i,
-            type=random.choice(['quizz', 'assignment']),
+            type='resource',
             activation_date=fake.date_time_between_dates(datetime_start=since, datetime_end=until),
             cohort=random.choices(dynamic_cohort),
             activation_rate=fake.pyint(min_value=0, max_value=100)
         ) for i in range(8)
+    ]
+
+    active_actions += [
+        Action(
+            title={'en': f'Activité {i}'},
+            iri=i+8,
+            type='activity',
+            activation_date=fake.date_time_between_dates(datetime_start=since, datetime_end=until),
+            cohort=random.choices(dynamic_cohort),
+            activation_rate=fake.pyint(min_value=0, max_value=100)
+        ) for i in range(10)
     ]
 
     scores = []
