@@ -63,7 +63,6 @@ class SlidingWindow(BaseIndicator):
         return LRSQuery(
             query={
                 "activity": experience_id,
-                "since": self.since.isoformat(),
                 "until": self.until.isoformat(),
             }
         )
