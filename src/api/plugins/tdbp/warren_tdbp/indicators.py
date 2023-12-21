@@ -214,8 +214,9 @@ class ScoreIndicator(BaseIndicator):
 
     def compute(self) -> List[List[StudentScore]]:
         """TODO"""
-        # Compute active actions indicator
-        self.compute()
+        # Compute sliding window indicator
+        sliding_window = SlidingWindow(self.course_id, until=self.until)
+        sliding_window.compute()
 
         if self.student_id is None:
             cohort_score = []
