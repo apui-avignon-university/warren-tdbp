@@ -11,7 +11,7 @@ from ralph.backends.http.lrs import LRSQuery
 from ralph.conf import LRSHeaders
 from warren.backends import lrs_client as async_lrs_client
 from warren.filters import DatetimeRange
-from warren.indicators import BaseIndicator
+from warren.indicators import BaseIndicator, CacheMixin
 from warren.xi import ExperienceRead
 from warren.xi.clients import CRUDExperience as async_xi_experience_client
 
@@ -19,7 +19,7 @@ from ..conf import Settings
 from .models import ActiveAction, SlidingWindow, StudentScore
 
 
-class SlidingWindow(BaseIndicator):
+class SlidingWindow(BaseIndicator, CacheMixin):
     """TODO"""
 
     course_experiences: List[str] = None
@@ -191,7 +191,7 @@ class SlidingWindow(BaseIndicator):
         return active_actions
 
 
-class ScoreIndicator(BaseIndicator):
+class ScoreIndicator(BaseIndicator. CacheMixin):
     """TODO"""
 
     def __init__(

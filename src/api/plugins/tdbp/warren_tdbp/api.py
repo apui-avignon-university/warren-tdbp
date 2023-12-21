@@ -26,7 +26,7 @@ async def get_sliding_window(
 
     logger.debug("Start computing 'window' indicator")
     try:
-        results = indicator.compute()
+        results = indicator.get_or_compute()
     except (KeyError, AttributeError, LrsClientException) as exception:
         message = "An error occurred while computing sliding window"
         logger.exception("%s. Exception:", message)
@@ -45,7 +45,7 @@ async def get_score(until: datetime, course_id: str, student_id: Optional[str] =
     indicator = ScoreIndicator(course_id=course_id, until=until, student_id=student_id)
 
     try:
-        results = indicator.fetch()
+        results = indicator.get_or_compute()
     except (KeyError, AttributeError, LrsClientException) as exception:
         message = "An error occurred while computing student score(s)"
         logger.exception("%s. Exception:", message)
