@@ -18,7 +18,7 @@ from warren.xi.clients import CRUDExperience as async_xi_experience_client
 from .models import ActiveAction, SlidingWindow, StudentScore
 
 
-class SlidingWindowIndicator(BaseIndicator):
+class SlidingWindow(BaseIndicator):
     """TODO"""
 
     course_experiences: List[str] = None
@@ -213,7 +213,7 @@ class ScoreIndicator(BaseIndicator):
         )
         self.student_id = student_id
 
-    def fetch(self) -> List[List[StudentScore]]:
+    def compute(self) -> List[List[StudentScore]]:
         """TODO"""
         # Compute active actions indicator
         self.compute()
