@@ -15,6 +15,7 @@ from warren.indicators import BaseIndicator
 from warren.xi import ExperienceRead
 from warren.xi.clients import CRUDExperience as async_xi_experience_client
 
+from ..conf import Settings
 from .models import ActiveAction, SlidingWindow, StudentScore
 
 
@@ -30,15 +31,15 @@ class SlidingWindow(BaseIndicator):
         self,
         course_id: str,
         until: Optional[datetime] = None,
-        sliding_window_size: int = 15,
-        active_actions_min: int = 6,
-        dynamic_cohort_size: int = 3,
+        sliding_window_size_min: int = Settings.SLIDING_WINDOW_SIZE_MIN,
+        active_actions_min: int = Settings.ACTIVE_ACTIONS_MIN,
+        dynamic_cohort_min: int = Settings.DYNAMIC_COHORT_MIN,
     ):
         """Initializes sliding window indicator."""
         self.course_id = course_id
-        self.sliding_window_size = sliding_window_size
+        self.sliding_window_size_min = sliding_window_size_min
         self.active_actions_min = active_actions_min
-        self.dynamic_cohort_size = dynamic_cohort_size
+        self.dynamic_cohort_min = dynamic_cohort_min
         self.until = until or datetime.now()
 
     @property
@@ -84,7 +85,7 @@ class SlidingWindow(BaseIndicator):
 
         if (self.until - min_datetime) < self.sliding_window_size:
             raise Exception(
-                f"Floating window can not be computed. Statements are distributed on a timerange lower than {self.sliding_window_size} days."
+                f"Floating window can not be computed. Statements are distributed on a timerange lower than {self.sliding_window_size_min} days."
             )
 
         # Ensure that there are interactions with at least the required min number of course actions
@@ -100,7 +101,7 @@ class SlidingWindow(BaseIndicator):
 
         if cohort < self.dynamic_cohort_size:
             raise Exception(
-                f"Active actions can not be computed. Statements are generated for less than {self.dynamic_cohort_size} students."
+                f"Active actions can not be computed. Statements are generated for less than {self.dynamic_cohort_min} students."
             )
 
         return raw_statements
@@ -109,7 +110,7 @@ class SlidingWindow(BaseIndicator):
         """Returns number of course active actions."""
         statements = self.fetch_statements
         min_datetime = pd.Timestamp(min(statements["timestamp"]))
-        since = self.until + pd.offsets.Day(-self.sliding_window_size)
+        since = self.until + pd.offsets.Day(-self.sliding_window_size_min)
         active_actions_iris = []
 
         while since >= min_datetime:
@@ -134,7 +135,7 @@ class SlidingWindow(BaseIndicator):
 
                 if (
                     0.1 * temp_dynamic_cohort_size <= action_cohort
-                    and action_cohort >= self.dynamic_cohort_size
+                    and action_cohort >= self.dynamic_cohort_min
                 ):
                     active_actions_iris.append(action_id)
 
