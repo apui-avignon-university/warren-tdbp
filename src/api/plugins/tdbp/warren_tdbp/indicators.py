@@ -191,7 +191,7 @@ class SlidingWindowIndicator(BaseIndicator):
         return active_actions
 
 
-class ScoreIndicator(SlidingWindowIndicator):
+class ScoreIndicator(BaseIndicator):
     """TODO"""
 
     def __init__(
