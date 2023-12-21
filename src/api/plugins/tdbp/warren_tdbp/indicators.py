@@ -49,14 +49,14 @@ class SlidingWindow(BaseIndicator):
     def get_xi_experience_query(self):
         """To move to BaseIndicator in Warren core."""
 
-    def fetch_experiences(self) -> List[ExperienceRead]:
+    async def fetch_experiences(self) -> List[ExperienceRead]:
         """Return actions related to course read from Experience Index."""
 
-        # TODO
-        # Parse xi_url with course_id
-        # Query experience index to get course_id experience
-        # Query for each retrieved related experience IDs and content info
-        # Return list of experience
+        response = await self.xi_experience_client.get(
+            f"/api/v1/experiences/{self.course_id}"
+        )
+
+        return response.json()["relation_target"]
 
     def get_lrs_query(self, experience_id) -> LRSQuery:
         """Get the LRS query for fetching required statements."""
