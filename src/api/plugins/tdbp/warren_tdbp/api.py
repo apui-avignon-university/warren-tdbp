@@ -7,7 +7,7 @@ from typing import Optional
 from fastapi import APIRouter, status
 from ralph.exceptions import HTTPException, LrsClientException
 
-from .indicators import ActiveActionsIndicator, ScoreIndicator
+from .indicators import SlidingWindow, ScoreIndicator
 
 router = APIRouter(
     prefix="/tdbp",
@@ -22,13 +22,13 @@ async def get_sliding_window(
     course_id: str,
 ):
     """Return course sliding window indicator."""
-    indicator = ActiveActionsIndicator(course_id=course_id, until=until)
+    indicator = SlidingWindow(course_id=course_id, until=until)
 
     logger.debug("Start computing 'window' indicator")
     try:
         results = indicator.compute()
     except (KeyError, AttributeError, LrsClientException) as exception:
-        message = "An error occurred while computing window date range"
+        message = "An error occurred while computing sliding window"
         logger.exception("%s. Exception:", message)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=message
