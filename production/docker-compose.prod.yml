@@ -4,11 +4,12 @@ services:
   postgresql:
     image: postgres:12
     env_file:
-      - env/postgresql.env
+      - env.d/postgresql.env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./db-init:/docker-entrypoint-initdb.d/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U fun"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -16,12 +17,14 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
+        condition: any
+    networks:
+      - backend
   
   app:
     image: apuiavignonuniversity/warren-tdbp:app-0.1.0
     env_file:
-      - env/app.env
+      - env.d/app.env
     ports:
       - "8000:8000"
     command:
@@ -41,12 +44,14 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
+        condition: any
+    networks:
+      - backend
 
   api:
     image: apuiavignonuniversity/warren-tdbp:api-0.1.0
     env_file:
-      - env/api.env
+      - env.d/api.env
     ports:
       - "8100:8100"
     command:
@@ -61,21 +66,23 @@ services:
       - "8100"
       - "--reload"
     configs:
-      - source: logging_config.yaml
+      - source: logging_config
         target: /app/core/logging_config.yaml
     healthcheck:
       test: curl -f http://localhost:8100/__heartbeat__ || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 15s
+      start_period: 60s
     deploy:
       replicas: 3
       restart_policy:
-        condition: on-failure
+        condition: any
+    networks:
+      - backend
 
 configs:
-  logging_config.yaml:
+  logging_config:
     external: true
 
 volumes:
@@ -84,4 +91,8 @@ volumes:
   media:
     external: true
   static:
+    external: true
+
+networks:
+  backend:
     external: true
