@@ -47,6 +47,14 @@ WARREN_FRONTEND_IMAGE_TAG          ?= frontend-development
 WARREN_FRONTEND_IMAGE_BUILD_TARGET ?= development
 WARREN_FRONTEND_IMAGE_BUILD_PATH   ?= app/staticfiles/warren/assets/index.js
 
+# -- Documentation
+WARREN_DOCS_SERVER_PORT = 8000
+WARREN_DOCS_MIKE_PORT   = 8001
+WARREN_DOCS_ENV         = \
+													WARREN_DOCS_SERVER_PORT=$(WARREN_DOCS_SERVER_PORT) \
+													WARREN_DOCS_MIKE_PORT=$(WARREN_DOCS_MIKE_PORT)
+MKDOCS                  = $(WARREN_DOCS_ENV) $(COMPOSE_RUN) docs mkdocs
+MIKE                    = $(WARREN_DOCS_ENV) $(COMPOSE_RUN) docs mike
 
 # ==============================================================================
 # RULES
@@ -102,7 +110,8 @@ build: ## build the app containers
 build: \
   build-docker-api \
   build-docker-frontend \
-  build-docker-app
+  build-docker-app \
+  build-docker-docs
 .PHONY: build
 
 build-docker-api: ## build the api container
@@ -132,6 +141,10 @@ build-docker-frontend: .env
 	  $(COMPOSE) build frontend
 	@$(COMPOSE_RUN_FRONTEND) yarn install
 .PHONY: build-docker-frontend
+
+build-docker-docs: ## build the docs container
+	$(COMPOSE) build docs
+.PHONY: build-docker-docs
 
 build-frontend: ## build the frontend application
 	@$(COMPOSE_RUN) frontend yarn build
@@ -239,7 +252,8 @@ seed-lrs: \
 lint: ## lint api, app and frontend sources
 lint: \
   lint-api \
-  lint-frontend
+  lint-frontend \
+  lint-docs
 .PHONY: lint
 
 ### API ###
@@ -306,6 +320,33 @@ test-api: \
 	create-api-test-db
 	@$(COMPOSE_RUN_API) pytest
 .PHONY: test-api
+
+## -- Docs
+
+docs-build: ## build documentation site
+	$(MKDOCS) build
+.PHONY: docs-build
+
+docs-deploy: ## build and deploy documentation site for all versions
+	@echo "Deploying docs with version main to gh-pages"
+	@$(MIKE) deploy main
+.PHONY: docs-deploy
+
+lint-docs: ## lint the documentation sources
+	$(COMPOSE_RUN) prettier -c docs/**/*.md
+.PHONY: docs-lint
+
+lint-docs-fix: ## fix linter issues for documentation sources
+	$(COMPOSE_RUN) prettier -w docs/**/*.md
+.PHONY: docs-lint
+
+docs-serve: ## run mkdocs live server for dev docs
+	$(WARREN_DOCS_ENV) $(COMPOSE) up docs
+.PHONY: docs-serve
+
+docs-serve-pages: ## run mike live server for versioned docs
+	$(WARREN_DOCS_ENV) $(COMPOSE) up mike
+.PHONY: docs-serve-pages
 
 # -- Misc
 help:
