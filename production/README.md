@@ -60,6 +60,11 @@ docker volume create media
 docker volume create static
 ```
 
+We can check that all volumes have been created with the command:
+```bash
+docker volume ls
+```
+
 > For additional volume creation options (e.g. size, file system, device), refer to the
 > [documentation](https://docs.docker.com/engine/reference/commandline/volume_create/).
 
@@ -112,12 +117,22 @@ View all the running containers with:
 docker ps
 ```
 
+If a service is not started, we can investigate further with:
+```bash
+docker service ps --no-trunc SERVICE_NAME
+```
+
 For investigating further in case a service is not healthy, use:
 ```bash
 docker inspect --format "{{json .State.Health }}" CONTAINER_ID | jq
 ```
 _Note_: this command requires that [jq](https://jqlang.github.io/jq/) is installed
 on your operating system.
+
+We can check logs of a container directly with the command:
+```
+docker logs CONTAINER_ID
+```
 
 ### Migrating the databases
 
@@ -152,6 +167,9 @@ api.example.com {
 reverse_proxy:8100
 }
 ```
+
+_Note_: Adapt the Caddyfile to match your needs, pointing to your SSL certificate if your
+instance of Moodle only accepts HTTPS connections.
 
 Launch Caddy from the directory containing the Caddyfile with the command:
 ```bash
