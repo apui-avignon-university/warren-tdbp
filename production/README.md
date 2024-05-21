@@ -160,7 +160,7 @@ View all the running containers with:
 docker ps
 ```
 
-If a service is not started, we can investigate further with:
+If a service has not started, we can investigate further with:
 ```bash
 docker service ps --no-trunc SERVICE_NAME
 ```
@@ -172,7 +172,7 @@ docker inspect --format "{{json .State.Health }}" CONTAINER_ID | jq
 _Note_: this command requires that [jq](https://jqlang.github.io/jq/) is installed
 on your operating system.
 
-We can check logs of a container directly with the command:
+We can check logs of a specific container directly with the command:
 ```
 docker logs CONTAINER_ID
 ```
