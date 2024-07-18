@@ -104,7 +104,8 @@ index specific courses as needed.
 
 In this deployment, we use [swarm-cronjob](https://github.com/crazy-max/swarm-cronjob)
 to operate cronjobs. Time schedules are set through labels, which you can modify before
-deploying the stack, or change on a running stack with the command:
+deploying the stack by changing the label `swarm.cronjob.schedule`.
+You will also be able to change it on a running stack with the command:
 
 ```bash
 docker service update tdbp_indexer-cronjob --label-add "swarm.cronjob.schedule=55 15 * * *"
@@ -119,13 +120,14 @@ docker service logs -f tdbp_indexer-cronjob
 ### Configuring Moodle web services for XI indexation 
 
 In order for the Experience Index to access the Moodle courses and their content, we
-need to configure a web service under `Moodle > Web services` and following the 10 steps
+need to configure a web service under `Moodle > Web services` (or `Administration > Plugins > Web service`) and following the 10 steps
 provided by Moodle:
 1. Enable web service: `Yes`
 2. Enable protocols: `rest`
 3. Create a specific user: `warren_tdbp`
 4. Check its user capability
-5. Select a service: add a new service (let's name it `Warren-TdBP - XI`) 
+5. Select a service: add a new service (let's name it `Warren-TdBP - XI`). 
+⚠️ Check the `Authorized user only` checkbox.
 6. Add functions: new service `Warren-TdBP - XI` needs to have the following functions:
 - `core_course_get_courses` to get course details.
 - `core_course_get_contents` to get course contents.
